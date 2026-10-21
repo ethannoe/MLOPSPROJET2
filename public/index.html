@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TP CI/CD — Todo</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="card">
+      <header>
+        <h1 data-cy="title">Mes tâches</h1>
+        <p class="subtitle">Déployée automatiquement par GitHub Actions sur une VM Azure</p>
+      </header>
+
+      <form id="todo-form" data-cy="todo-form" autocomplete="off">
+        <input
+          id="todo-input"
+          data-cy="todo-input"
+          name="title"
+          placeholder="Nouvelle tâche…"
+          maxlength="120"
+          required
+        />
+        <button type="submit" data-cy="todo-submit">Ajouter</button>
+      </form>
+      <p id="error" class="error" data-cy="error" role="alert" hidden></p>
+
+      <p class="stats" data-cy="stats"></p>
+      <ul id="todo-list" data-cy="todo-list"></ul>
+
+      <footer>
+        <span data-cy="health">Statut : …</span>
+        <span data-cy="version"></span>
+      </footer>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+# Lancement local : docker compose up --build  ->  http://localhost:3000
+services:
+  app:
+    build:
+      context: .
+      args:
+        APP_VERSION: local
+    image: tp-cicd-app:local
+    container_name: myapp
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

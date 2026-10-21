@@ -1,0 +1,11 @@
+#cloud-config
+# Préparation de la VM au premier démarrage : installe Docker et
+# autorise l'utilisateur de déploiement à s'en servir sans sudo.
+# (Facultatif : scripts/deploy.sh installe aussi Docker s'il est absent.)
+package_update: true
+packages:
+  - docker.io
+  - curl
+runcmd:
+  - systemctl enable --now docker
+  - usermod -aG docker azureuser # adapter si un autre nom d'admin est utilisé

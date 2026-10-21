@@ -1,0 +1,17 @@
+node_modules/
+coverage/
+npm-debug.log*
+.env
+.env.*
+
+# Artefacts Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+# Ne jamais versionner de clé
+*.pem
+*_key
+id_*
+
+.DS_Store
