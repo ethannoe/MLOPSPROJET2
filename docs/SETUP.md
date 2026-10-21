@@ -83,19 +83,19 @@ Le dépôt `tp-cicd-app` est créé automatiquement au premier push. Il doit êt
 
 ## 5. Capture d'écran et README
 
-1. Ouvrez `http://<IP_PUBLIQUE>` dans le navigateur, avec la barre d'adresse visible.
+1. Ouvrez `http://<IP_PUBLIQUE>:8642` dans le navigateur, avec la barre d'adresse visible.
 2. Enregistrez la capture sous `docs/capture-vm.png`.
-3. Remplacez `<IP_PUBLIQUE_VM>` par l'IP de la VM dans le README.
+3. Si l'IP ou le port changent, mettez à jour l'URL en haut du README (et `HOST_PORT` dans le workflow).
 4. `git add . && git commit -m "docs: capture de la VM" && git push` : ce push redéploie automatiquement.
 
 ## 6. Démontrer l'idempotence
 
 - *Actions → dernier run → Re-run all jobs* : le log du job Deploy affiche
-  `Le conteneur 'myapp' exécute déjà cette image -> aucun redémarrage`.
+  `Le conteneur 'ethannoe-tp-cicd' exécute déjà cette image -> aucun redémarrage`.
 - Sur la VM, il n'y a toujours qu'un seul conteneur :
 
   ```bash
-  ssh -i ~/.ssh/tp_cicd_deploy azureuser@<IP_PUBLIQUE> docker ps
+  ssh -i ~/.ssh/tp_cicd_deploy ubuntu@<IP_PUBLIQUE> docker ps --filter name=ethannoe-tp-cicd
   ```
 
 ## Dépannage
@@ -105,7 +105,7 @@ Le dépôt `tp-cicd-app` est créé automatiquement au premier push. Il doit êt
 | `Permission denied (publickey)` | `VM_SSH_KEY` incomplète, mauvais `VM_USER`, ou clé publique différente sur la VM |
 | `ssh-keyscan` / `Connection timed out` | mauvaise IP ou port 22 fermé dans le groupe de sécurité réseau (NSG) |
 | `pull access denied` sur la VM | dépôt Docker Hub privé → le passer en public |
-| Healthcheck en échec mais deploy OK | port 80 non ouvert dans le NSG |
+| Healthcheck en échec mais deploy OK | le port (`HOST_PORT`, 8642) n'est pas ouvert dans le groupe de sécurité réseau (NSG) |
 | `unauthorized` au login Docker Hub | token expiré ou en lecture seule |
 
 ## Fin du TP

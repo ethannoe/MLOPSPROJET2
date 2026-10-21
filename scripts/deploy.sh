@@ -3,7 +3,7 @@
 #   ssh user@vm 'bash -s -- <image:tag>' < scripts/deploy.sh
 #
 # Il est idempotent : on peut le relancer autant de fois que l'on veut,
-# il n'y aura toujours qu'un seul conteneur "myapp".
+# il n'y aura toujours qu'un seul conteneur portant ce nom.
 #   - même image déjà en cours d'exécution  -> rien n'est redémarré
 #   - nouvelle image                         -> l'ancien conteneur est remplacé
 set -euo pipefail

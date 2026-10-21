@@ -11,7 +11,10 @@ permissions:
 env:
   NODE_VERSION: 24
   IMAGE_NAME: tp-cicd-app
-  CONTAINER_NAME: myapp
+  # La VM est partagée avec d'autres élèves : nom de conteneur et port
+  # propres à ce projet pour ne jamais écraser ni bloquer leurs applications.
+  CONTAINER_NAME: ethannoe-tp-cicd
+  HOST_PORT: 8642
 
 jobs:
   # ---------------------------------------------------------------------------
@@ -152,24 +155,24 @@ jobs:
           IMAGE="$DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG"
           ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ConnectTimeout=20 \
             "$VM_USER@$VM_HOST" \
-            "bash -s -- '$IMAGE' '$CONTAINER_NAME' 80" < scripts/deploy.sh
+            "bash -s -- '$IMAGE' '$CONTAINER_NAME' '$HOST_PORT'" < scripts/deploy.sh
 
       # Vérification depuis l'extérieur, via l'IP publique : le service répond
       # ET c'est bien la version de ce commit qui tourne.
       - name: Healthcheck via l'IP publique
         run: |
           for i in $(seq 1 15); do
-            if BODY=$(curl -fsS --max-time 5 "http://$VM_HOST/health"); then
+            if BODY=$(curl -fsS --max-time 5 "http://$VM_HOST:$HOST_PORT/health"); then
               echo "Réponse : $BODY"
               if echo "$BODY" | jq -e --arg v "$TAG" '.status == "ok" and .version == $v' > /dev/null; then
-                echo "OK : version $TAG en ligne sur http://$VM_HOST"
+                echo "OK : version $TAG en ligne sur http://$VM_HOST:$HOST_PORT"
                 exit 0
               fi
             fi
             echo "Tentative $i/15 échouée, nouvel essai dans 4s..."
             sleep 4
           done
-          echo "L'application ne répond pas correctement sur http://$VM_HOST/health"
+          echo "L'application ne répond pas correctement sur http://$VM_HOST:$HOST_PORT/health"
           exit 1
 
       - name: Résumé
@@ -178,8 +181,8 @@ jobs:
             echo "### Déploiement réussi"
             echo ""
             echo "- Image : \`$DOCKERHUB_USERNAME/$IMAGE_NAME:$TAG\`"
-            echo "- Application : http://$VM_HOST"
-            echo "- Healthcheck : http://$VM_HOST/health"
+            echo "- Application : http://$VM_HOST:$HOST_PORT"
+            echo "- Healthcheck : http://$VM_HOST:$HOST_PORT/health"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Supprimer la clé SSH du runner
